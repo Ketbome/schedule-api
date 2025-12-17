@@ -1,13 +1,15 @@
-import express, { Request, Response } from "express";
-import { variablesConfig } from "./enviroments/variablesConfig";
+import express from "express";
+import { variablesConfig } from "./config/variablesConfig";
+import agendaRoutes from "./routes/agenda.route";
+import { errorHandler } from "./middlewares/errorHandler";
 
 const app = express();
 
 const PORT = variablesConfig.PORT;
 
-app.get("/", (request: Request, response: Response) => {
-  response.status(200).send("Hello World");
-});
+app.use("/api/agenda", agendaRoutes);
+
+app.use(errorHandler);
 
 app
   .listen(PORT, () => {
