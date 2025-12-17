@@ -1,9 +1,13 @@
 import mongoose from "mongoose";
 import { Agenda } from "../schemas/agenda.schema";
+import dotenv from "dotenv";
+import { AgendaInput } from "../models/agenda.interface";
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/ripley-agenda";
+dotenv.config();
 
-const agendas = [
+const MONGODB_URI = process.env.MONGODB_URI;
+
+const agendas: AgendaInput[] = [
   {
     bodega: "Bodega Central Santiago",
     operadorLogistico: "Chilexpress",
@@ -62,6 +66,9 @@ const agendas = [
 
 async function seed() {
   try {
+    if (!MONGODB_URI) {
+      throw new Error("MONGODB_URI no está definida");
+    }
     await mongoose.connect(MONGODB_URI);
     console.log("Conectado a MongoDB");
 

@@ -1,11 +1,11 @@
 import { Document } from "mongoose";
 
 export interface HorarioCorte {
-  dia: number; // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
-  hora: string; // "HH:mm"
+  dia: number; // 0 = Lunes, 1 = Martes, ..., 6 = Domingo
+  hora: string;
 }
 
-export interface IAgenda extends Document {
+export interface AgendaInput {
   bodega: string;
   operadorLogistico: string;
   metodoEntrega: "Despacho a domicilio" | "Retiro en tienda";
@@ -15,3 +15,5 @@ export interface IAgenda extends Document {
   skus: string[];
   activo: boolean;
 }
+
+export interface IAgenda extends AgendaInput, Document {}
