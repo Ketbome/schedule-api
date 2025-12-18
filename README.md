@@ -73,8 +73,8 @@ Swagger UI en `http://localhost:3000/api-docs`
 | Método | Ruta                            | Descripción                                 |
 | ------ | ------------------------------- | ------------------------------------------- |
 | GET    | `/api/schedule`                 | Listar agendas activas                      |
-| POST   | `/api/schedule`                 | Obtener fechas disponibles por SKU y comuna |
-| PUT    | `/api/schedule/change-cut-time` | Modificar horario de corte                  |
+| POST   | `/api/schedule/available`       | Obtener fechas disponibles por SKU y comuna |
+| PUT    | `/api/schedule/change-cut-time` | Modificar horario de corte                   |
 
 ### POST /api/schedule
 

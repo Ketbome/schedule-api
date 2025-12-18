@@ -69,7 +69,7 @@ router.get("/", getSchedules);
 
 /**
  * @swagger
- * /api/schedule:
+ * /api/schedule/available:
  *   post:
  *     summary: Obtener agendas disponibles por SKU y comuna
  *     tags: [Schedule]
@@ -108,7 +108,7 @@ router.get("/", getSchedules);
  *       404:
  *         description: No hay agendas disponibles
  */
-router.post("/", validate(getScheduleAvailableSchema), getScheduleAvailable);
+router.post("/available", validate(getScheduleAvailableSchema), getScheduleAvailable);
 
 /**
  * @swagger
