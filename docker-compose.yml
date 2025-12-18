@@ -1,0 +1,35 @@
+services:
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=mongodb://${MONGODB_USER}:${MONGODB_PASS}@mongo:27017/ripley-agenda?authSource=admin
+      - PORT=${PORT}
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASS}
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
+  seed:
+    build: .
+    command: npm run seed
+    environment:
+      - MONGODB_URI=mongodb://${MONGODB_USER}:${MONGODB_PASS}@mongo:27017/ripley-agenda?authSource=admin
+    depends_on:
+      - mongo
+    profiles:
+      - seed
+
+volumes:
+  mongo-data:
