@@ -1,7 +1,12 @@
 import { ISchedule, IScheduleResponse, CutTime } from "../../models/schedule.interface";
 
-export function buildResponse(schedule: ISchedule, sku: string, comuna: number): IScheduleResponse {
-  const fechas = calcularFechasDisponibles(schedule);
+export function buildResponse(
+  schedule: ISchedule,
+  sku: string,
+  comuna: number,
+  now: Date = new Date()
+): IScheduleResponse {
+  const fechas = calcularFechasDisponibles(schedule, now);
 
   return {
     sku,
@@ -13,26 +18,21 @@ export function buildResponse(schedule: ISchedule, sku: string, comuna: number):
   };
 }
 
-function calcularFechasDisponibles(schedule: ISchedule): string[] {
-  const ahora = new Date();
-  let diaActual = ahora.getDay() - 1; // 0 = Lunes, 1 = Martes, ..., 6 = Domingo
-  if (diaActual < 0) {
-    diaActual = 6; // Domingo
-  }
+export function calcularFechasDisponibles(schedule: ISchedule, now: Date = new Date()): string[] {
+  const diaActual = getDiaChile(now.getDay());
 
   const horarioHoy = schedule.horariosCorte.find((h: CutTime) => h.dia === diaActual);
 
   let diasExtra = 0;
-  if (horarioHoy && estaFueraDeHorarioCorte(ahora, horarioHoy.hora)) {
+  if (horarioHoy && estaFueraDeHorarioCorte(now, horarioHoy.hora)) {
     diasExtra = 1;
   }
 
   const diasTotales = schedule.diasDesfase + diasExtra;
   const fechas: string[] = [];
 
-  // 5 fechas generadas
   for (let i = 0; i < 5; i++) {
-    const fecha = new Date(ahora);
+    const fecha = new Date(now);
     fecha.setDate(fecha.getDate() + diasTotales + i);
     fechas.push(formatearFecha(fecha));
   }
@@ -40,7 +40,7 @@ function calcularFechasDisponibles(schedule: ISchedule): string[] {
   return fechas;
 }
 
-function estaFueraDeHorarioCorte(ahora: Date, horaCorte: string): boolean {
+export function estaFueraDeHorarioCorte(ahora: Date, horaCorte: string): boolean {
   const [horas, minutos] = horaCorte.split(":").map(Number);
   const fechaCorte = new Date(ahora);
   fechaCorte.setHours(horas, minutos, 0, 0);
@@ -48,6 +48,10 @@ function estaFueraDeHorarioCorte(ahora: Date, horaCorte: string): boolean {
   return ahora > fechaCorte;
 }
 
-function formatearFecha(fecha: Date): string {
-  return fecha.toLocaleDateString("es-CL"); // DD-MM-YYYY
+export function formatearFecha(fecha: Date): string {
+  return fecha.toLocaleDateString("es-CL");
+}
+
+export function getDiaChile(jsDay: number): number {
+  return jsDay === 0 ? 6 : jsDay - 1;
 }
