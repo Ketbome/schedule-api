@@ -1,12 +1,29 @@
 import { Request, Response, NextFunction } from "express";
 
 import * as scheduleService from "../services/schedule.service";
-import { GetScheduleAvailableInput, ChangeCutTimeInput } from "../validators/schedule.validator";
+import {
+  GetScheduleAvailableInput,
+  ChangeCutTimeInput,
+  CreateScheduleInput,
+} from "../validators/schedule.validator";
 
 export async function getSchedules(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const schedules = await scheduleService.getSchedules();
     res.status(200).json({ success: true, data: schedules });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function createSchedule(
+  req: Request<unknown, unknown, CreateScheduleInput>,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const schedule = await scheduleService.createSchedule(req.body);
+    res.status(201).json({ success: true, data: schedule });
   } catch (error) {
     next(error);
   }

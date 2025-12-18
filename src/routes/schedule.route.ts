@@ -1,11 +1,16 @@
 import { Router } from "express";
 import {
   changeCutTimeOfSchedule,
+  createSchedule,
   getScheduleAvailable,
   getSchedules,
 } from "../controllers/schedule.controller";
 import { validate } from "../middlewares/validate";
-import { getScheduleAvailableSchema, changeCutTimeSchema } from "../validators/schedule.validator";
+import {
+  getScheduleAvailableSchema,
+  changeCutTimeSchema,
+  createScheduleSchema,
+} from "../validators/schedule.validator";
 
 const router = Router();
 
@@ -66,6 +71,62 @@ const router = Router();
  *                     type: object
  */
 router.get("/", getSchedules);
+
+/**
+ * @swagger
+ * /api/schedule:
+ *   post:
+ *     summary: Crear una nueva agenda
+ *     tags: [Schedule]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - bodega
+ *               - operadorLogistico
+ *               - metodoEntrega
+ *               - comunasCubiertas
+ *               - diasDesfase
+ *               - horariosCorte
+ *               - skus
+ *             properties:
+ *               bodega:
+ *                 type: string
+ *                 example: "Bodega Central"
+ *               operadorLogistico:
+ *                 type: string
+ *                 example: "Chilexpress"
+ *               metodoEntrega:
+ *                 type: string
+ *                 enum: [Despacho a domicilio, Retiro en tienda]
+ *               comunasCubiertas:
+ *                 type: array
+ *                 items:
+ *                   type: number
+ *                 example: [13101, 13102]
+ *               diasDesfase:
+ *                 type: number
+ *                 example: 1
+ *               horariosCorte:
+ *                 type: array
+ *                 items:
+ *                   $ref: '#/components/schemas/CutTime'
+ *                 description: "Días sin horario = no hay entrega ese día"
+ *               skus:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["SKU-12345", "SKU-67890"]
+ *     responses:
+ *       201:
+ *         description: Agenda creada
+ *       400:
+ *         description: Error de validación
+ */
+router.post("/", validate(createScheduleSchema), createSchedule);
 
 /**
  * @swagger

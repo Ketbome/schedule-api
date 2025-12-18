@@ -20,6 +20,7 @@ export function buildResponse(
 
 export function calcularFechasDisponibles(schedule: ISchedule, now: Date = new Date()): string[] {
   const diaActual = getDiaChile(now.getDay());
+  const diasConEntrega = new Set(schedule.horariosCorte.map((h: CutTime) => h.dia));
 
   const horarioHoy = schedule.horariosCorte.find((h: CutTime) => h.dia === diaActual);
 
@@ -28,13 +29,23 @@ export function calcularFechasDisponibles(schedule: ISchedule, now: Date = new D
     diasExtra = 1;
   }
 
-  const diasTotales = schedule.diasDesfase + diasExtra;
-  const fechas: string[] = [];
+  const fechaInicio = new Date(now);
+  fechaInicio.setDate(fechaInicio.getDate() + schedule.diasDesfase + diasExtra);
 
-  for (let i = 0; i < 5; i++) {
-    const fecha = new Date(now);
-    fecha.setDate(fecha.getDate() + diasTotales + i);
-    fechas.push(formatearFecha(fecha));
+  const fechas: string[] = [];
+  let intentos = 0;
+  const maxIntentos = 30;
+
+  while (fechas.length < 5 && intentos < maxIntentos) {
+    const fecha = new Date(fechaInicio);
+    fecha.setDate(fecha.getDate() + intentos);
+    const diaFecha = getDiaChile(fecha.getDay());
+
+    if (diasConEntrega.has(diaFecha)) {
+      fechas.push(formatearFecha(fecha));
+    }
+
+    intentos++;
   }
 
   return fechas;

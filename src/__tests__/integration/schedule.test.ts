@@ -69,13 +69,54 @@ describe("GET /api/schedule", () => {
   });
 });
 
-describe("POST /api/schedule", () => {
+describe("POST /api/schedule (crear agenda)", () => {
+  it("crea agenda correctamente", async () => {
+    const res = await request(app).post("/api/schedule").send({
+      bodega: "Bodega Nueva",
+      operadorLogistico: "Nuevo Express",
+      metodoEntrega: "Retiro en tienda",
+      comunasCubiertas: [13101],
+      diasDesfase: 0,
+      horariosCorte: [{ dia: 0, hora: "18:00" }],
+      skus: ["SKU-99999"],
+    });
+
+    expect(res.status).toBe(201);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data.bodega).toBe("Bodega Nueva");
+    expect(res.body.data.activo).toBe(true);
+  });
+
+  it("retorna 400 cuando falta campo requerido", async () => {
+    const res = await request(app).post("/api/schedule").send({
+      bodega: "Bodega Nueva",
+    });
+
+    expect(res.status).toBe(400);
+  });
+
+  it("retorna 400 con metodoEntrega inválido", async () => {
+    const res = await request(app).post("/api/schedule").send({
+      bodega: "Bodega Nueva",
+      operadorLogistico: "Test",
+      metodoEntrega: "Invalido",
+      comunasCubiertas: [13101],
+      diasDesfase: 0,
+      horariosCorte: [{ dia: 0, hora: "18:00" }],
+      skus: ["SKU-99999"],
+    });
+
+    expect(res.status).toBe(400);
+  });
+});
+
+describe("POST /api/schedule/available", () => {
   beforeEach(async () => {
     await Schedule.create(testSchedule);
   });
 
   it("retorna agendas disponibles para SKU y comuna válidos", async () => {
-    const res = await request(app).post("/api/schedule").send({
+    const res = await request(app).post("/api/schedule/available").send({
       sku: "SKU-12345",
       codigoComuna: 13101,
     });
@@ -92,7 +133,7 @@ describe("POST /api/schedule", () => {
   });
 
   it("retorna 404 cuando no hay agendas para el SKU", async () => {
-    const res = await request(app).post("/api/schedule").send({
+    const res = await request(app).post("/api/schedule/available").send({
       sku: "SKU-99999",
       codigoComuna: 13101,
     });
@@ -101,7 +142,7 @@ describe("POST /api/schedule", () => {
   });
 
   it("retorna 404 cuando no hay agendas para la comuna", async () => {
-    const res = await request(app).post("/api/schedule").send({
+    const res = await request(app).post("/api/schedule/available").send({
       sku: "SKU-12345",
       codigoComuna: 99999,
     });
@@ -110,7 +151,7 @@ describe("POST /api/schedule", () => {
   });
 
   it("retorna 400 cuando falta sku", async () => {
-    const res = await request(app).post("/api/schedule").send({
+    const res = await request(app).post("/api/schedule/available").send({
       codigoComuna: 13101,
     });
 
@@ -119,7 +160,7 @@ describe("POST /api/schedule", () => {
   });
 
   it("retorna 400 cuando sku no tiene prefijo SKU-", async () => {
-    const res = await request(app).post("/api/schedule").send({
+    const res = await request(app).post("/api/schedule/available").send({
       sku: "12345",
       codigoComuna: 13101,
     });
@@ -128,7 +169,7 @@ describe("POST /api/schedule", () => {
   });
 
   it("convierte codigoComuna string a number", async () => {
-    const res = await request(app).post("/api/schedule").send({
+    const res = await request(app).post("/api/schedule/available").send({
       sku: "SKU-12345",
       codigoComuna: "13101",
     });

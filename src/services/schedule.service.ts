@@ -1,11 +1,16 @@
 import { AppError } from "../errors/app.error";
-import { CutTime, ISchedule, IScheduleResponse } from "../models/schedule.interface";
+import { CutTime, ISchedule, IScheduleResponse, ScheduleInput } from "../models/schedule.interface";
 import { Schedule } from "../schemas/schedule.schema";
 import { buildResponse } from "./converters/date.converter";
 
 export async function getSchedules(): Promise<ISchedule[]> {
   const schedules = await Schedule.find({ activo: true });
   return schedules;
+}
+
+export async function createSchedule(data: Omit<ScheduleInput, "activo">): Promise<ISchedule> {
+  const schedule = await Schedule.create({ ...data, activo: true });
+  return schedule;
 }
 
 export async function getSchedulesAvailable(

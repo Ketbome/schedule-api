@@ -73,10 +73,11 @@ Swagger UI en `http://localhost:3000/api-docs`
 | Método | Ruta                            | Descripción                                 |
 | ------ | ------------------------------- | ------------------------------------------- |
 | GET    | `/api/schedule`                 | Listar agendas activas                      |
+| POST   | `/api/schedule`                 | Crear nueva agenda                          |
 | POST   | `/api/schedule/available`       | Obtener fechas disponibles por SKU y comuna |
-| PUT    | `/api/schedule/change-cut-time` | Modificar horario de corte                   |
+| PUT    | `/api/schedule/change-cut-time` | Modificar horario de corte                  |
 
-### POST /api/schedule
+### POST /api/schedule/available
 
 ```json
 {
@@ -94,7 +95,7 @@ Response:
     {
       "sku": "SKU-12345",
       "comuna": 13101,
-      "fechasDisponibles": ["19-12-2024", "20-12-2024", "21-12-2024"],
+      "fechasDisponibles": ["19-12-2024", "20-12-2024", "23-12-2024"],
       "bodega": "Bodega Central Santiago",
       "operadorLogistico": "Chilexpress",
       "metodoEntrega": "Despacho a domicilio"
@@ -107,3 +108,4 @@ Response:
 
 - **diasDesfase**: Días base que se agregan antes de ofrecer la primera fecha
 - **horarioCorte**: Si la consulta es después del horario de corte del día, se suma 1 día adicional
+- **Días sin horario**: Si una agenda no tiene configurado un día (ej: no tiene sábado/domingo), ese día se salta automáticamente al calcular las fechas disponibles. Por ejemplo, si solo hay horarios de Lunes a Viernes, las fechas nunca caerán en fin de semana

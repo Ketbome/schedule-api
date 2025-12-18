@@ -4,6 +4,7 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - NODE_ENV=production
       - MONGODB_URI=mongodb://${MONGODB_USER}:${MONGODB_PASS}@mongo:27017/ripley-agenda?authSource=admin
       - PORT=${PORT}
     depends_on:
