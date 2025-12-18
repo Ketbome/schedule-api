@@ -5,8 +5,8 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - MONGODB_URI=mongodb://${MONGODB_USER}:${MONGODB_PASS}@mongo:27017/ripley-agenda?authSource=admin
-      - PORT=${PORT}
+      - MONGODB_URI=mongodb://${MONGODB_USER:-admin}:${MONGODB_PASS:-secret}@mongo:27017/ripley-agenda?authSource=admin
+      - PORT=${PORT:-3000}
     depends_on:
       - mongo
     restart: unless-stopped
@@ -16,8 +16,8 @@ services:
     ports:
       - "27017:27017"
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASS}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASS:-secret}
     volumes:
       - mongo-data:/data/db
     restart: unless-stopped
@@ -26,7 +26,7 @@ services:
     build: .
     command: npm run seed:prod
     environment:
-      - MONGODB_URI=mongodb://${MONGODB_USER}:${MONGODB_PASS}@mongo:27017/ripley-agenda?authSource=admin
+      - MONGODB_URI=mongodb://${MONGODB_USER:-admin}:${MONGODB_PASS:-secret}@mongo:27017/ripley-agenda?authSource=admin
     depends_on:
       - mongo
     profiles:
