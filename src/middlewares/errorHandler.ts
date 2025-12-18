@@ -9,9 +9,9 @@ export function errorHandler(err: Error, _req: Request, res: Response, _next: Ne
     });
   }
 
-  console.error("Error no controlado:", err);
+  console.error("Unhandled error:", err);
   res.status(500).json({
     success: false,
-    message: `Error interno del servidor: ${err.message}`,
+    message: `Internal Server Error: ${err.message}`,
   });
 }

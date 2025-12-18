@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
-import { HorarioCorte, IAgenda } from "../models/agenda.interface";
+import { CutTime, ISchedule } from "../models/schedule.interface";
 
-const horarioCorteSchema = new Schema<HorarioCorte>(
+const cutTimeSchema = new Schema<CutTime>(
   {
     dia: { type: Number, required: true, min: 0, max: 6 },
     hora: { type: String, required: true },
@@ -9,7 +9,7 @@ const horarioCorteSchema = new Schema<HorarioCorte>(
   { _id: false }
 );
 
-const agendaSchema = new Schema<IAgenda>(
+const scheduleSchema = new Schema<ISchedule>(
   {
     bodega: { type: String, required: true },
     operadorLogistico: { type: String, required: true },
@@ -20,14 +20,14 @@ const agendaSchema = new Schema<IAgenda>(
     },
     comunasCubiertas: [{ type: Number }],
     diasDesfase: { type: Number, required: true, min: 0 },
-    horariosCorte: [horarioCorteSchema],
+    horariosCorte: [cutTimeSchema],
     skus: [{ type: String }],
     activo: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
 
-agendaSchema.index({ activo: 1, comunasCubiertas: 1 });
-agendaSchema.index({ activo: 1, skus: 1 });
+scheduleSchema.index({ activo: 1, comunasCubiertas: 1 });
+scheduleSchema.index({ activo: 1, skus: 1 });
 
-export const Agenda = mongoose.model<IAgenda>("Agenda", agendaSchema);
+export const Schedule = mongoose.model<ISchedule>("Schedule", scheduleSchema);

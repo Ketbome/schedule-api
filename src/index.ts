@@ -1,14 +1,23 @@
 import express from "express";
+import swaggerUi from "swagger-ui-express";
 import { variablesConfig } from "./config/variablesConfig";
 import { connectDB } from "./config/database";
-import agendaRoutes from "./routes/agenda.route";
+import { swaggerSpec } from "./config/swagger";
 import { errorHandler } from "./middlewares/errorHandler";
+import scheduleRoutes from "./routes/schedule.route";
 
 const app = express();
 
 app.use(express.json());
 
-app.use("/api/agenda", agendaRoutes);
+// Swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Routes
+app.use("/api/schedule", scheduleRoutes);
+
+// Health check
+app.get("/health", (_, res) => res.json({ status: "ok" }));
 
 app.use(errorHandler);
 

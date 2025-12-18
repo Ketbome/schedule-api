@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
-import { Agenda } from "../schemas/agenda.schema";
+import { Schedule } from "../schemas/schedule.schema";
 import dotenv from "dotenv";
-import { AgendaInput } from "../models/agenda.interface";
+import { ScheduleInput } from "../models/schedule.interface";
 
 dotenv.config();
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
-const agendas: AgendaInput[] = [
+const schedules: ScheduleInput[] = [
   {
     bodega: "Bodega Central Santiago",
     operadorLogistico: "Chilexpress",
@@ -72,14 +72,14 @@ async function seed() {
     await mongoose.connect(MONGODB_URI);
     console.log("Conectado a MongoDB");
 
-    await Agenda.deleteMany({});
-    console.log("Agendas anteriores eliminadas");
+    await Schedule.deleteMany({});
+    console.log("Schedules anteriores eliminadas");
 
-    await Agenda.insertMany(agendas);
-    console.log(`${agendas.length} agendas insertadas`);
+    await Schedule.insertMany(schedules);
+    console.log(`${schedules.length} schedules insertadas`);
 
-    console.log("\nAgendas creadas:");
-    agendas.forEach((a, i) => {
+    console.log("\nSchedules creadas:");
+    schedules.forEach((a, i) => {
       console.log(`  ${i + 1}. ${a.bodega} | ${a.operadorLogistico} | ${a.metodoEntrega}`);
       console.log(`     Comunas: ${a.comunasCubiertas.join(", ")}`);
       console.log(`     Días desfase: ${a.diasDesfase}`);
