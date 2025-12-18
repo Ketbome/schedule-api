@@ -16,7 +16,7 @@ services:
     ports:
       - "27017:27017"
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER:-admin}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER:-admin} # No es buena practica usar el usuario admin, pero para fines de prueba lo dejo asi.
       - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASS:-secret}
     volumes:
       - mongo-data:/data/db
