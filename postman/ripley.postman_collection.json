@@ -1,0 +1,153 @@
+{
+	"info": {
+		"_postman_id": "ad442a19-5d04-4ad4-8e19-9f60e339fbfa",
+		"name": "ripley",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34243047",
+		"_collection_link": "https://ripley-9338.postman.co/workspace/test~57f0baef-ce47-47cd-9242-f876549f863a/collection/34243047-ad442a19-5d04-4ad4-8e19-9f60e339fbfa?action=share&source=collection_link&creator=34243047"
+	},
+	"item": [
+		{
+			"name": "Get agenda",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/schedule",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"schedule"
+					]
+				},
+				"description": "Obtiene todas las agendas activas del sistema.  \nNo requiere body."
+			},
+			"response": []
+		},
+		{
+			"name": "Post Agregar Agenda",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bodega\": \"Bodega Nueva 3\",\n    \"operadorLogistico\": \"Chilexpress\",\n    \"metodoEntrega\": \"Despacho a domicilio\",\n    \"comunasCubiertas\": [13101, 13102, 13103],\n    \"diasDesfase\": 3,\n    \"horariosCorte\": [\n      { \"dia\": 0, \"hora\": \"18:00\" },\n      { \"dia\": 1, \"hora\": \"18:00\" },\n      { \"dia\": 2, \"hora\": \"18:00\" },\n      { \"dia\": 3, \"hora\": \"18:00\" },\n      { \"dia\": 4, \"hora\": \"17:00\" }\n    ],\n    \"skus\": [\"SKU-12345\", \"SKU-67890\"]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/schedule",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"schedule"
+					]
+				},
+				"description": "Obtiene las agendas disponibles para un SKU y comuna específicos.  \nRetorna las fechas de despacho calculadas según el horario de corte y días de desfase.\n\nBody:\n\n- sku: string (debe empezar con \"SKU-\")\n    \n- codigoComuna: number (ej: 13101 para Santiago)"
+			},
+			"response": []
+		},
+		{
+			"name": "Post Agenda Disponible",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sku\": \"SKU-12345\",\n    \"codigoComuna\": 13101\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/schedule/available",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"schedule",
+						"available"
+					]
+				},
+				"description": "Obtiene las agendas disponibles para un SKU y comuna específicos.  \nRetorna las fechas de despacho calculadas según el horario de corte y días de desfase.\n\nBody:\n\n- sku: string (debe empezar con \"SKU-\")\n    \n- codigoComuna: number (ej: 13101 para Santiago)"
+			},
+			"response": []
+		},
+		{
+			"name": "Put Cambiar horario corte",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"scheduleId\": \"6943434f0a3f4ca86ca040e3\",\n    \"horarioCorte\": {\n      \"dia\": 2,\n      \"hora\": \"22:00\"\n    }\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/schedule/change-cut-time",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"schedule",
+						"change-cut-time"
+					]
+				},
+				"description": "Modifica el horario de corte de una agenda.\n\nIMPORTANTE: El campo \"dia\" usa una convención adaptada para Chile:  \n0 = Lunes  \n1 = Martes  \n2 = Miércoles  \n3 = Jueves  \n4 = Viernes  \n5 = Sábado  \n6 = Domingo\n\n(JavaScript por defecto usa 0 = Domingo, pero lo modifiqué para que Lunes sea el inicio de semana)\n\nBody:\n\n- scheduleId: string (ID de MongoDB de la agenda)\n    \n- horarioCorte: object\n    \n    - dia: number (0-6, donde 0 = Lunes)\n        \n    - hora: string (formato \"HH:MM\", ej: \"18:00\")\n        \n\nEjemplo:  \n{  \n\"scheduleId\": \"6789abc123def456\",  \n\"horarioCorte\": {  \n\"dia\": 1,  \n\"hora\": \"14:00\"  \n}  \n}  \n→ Esto configura el horario de corte del Martes a las 14:00"
+			},
+			"response": []
+		}
+	]
+}
